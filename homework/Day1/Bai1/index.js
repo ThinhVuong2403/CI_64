@@ -4,9 +4,9 @@ let row = document.getElementById("row");
 
 function createTable(a, b){
     let output = "";
-    for (let i = 0; i < a; i++) {
+    for (let i = 0; i < b; i++) {
         output += '<tr>';
-        for (let j = 0; j < b; j++) {
+        for (let j = 0; j < a; j++) {
             output += '<td><input type="text" size="10px"></td>';
         }
         output += '</tr>';
@@ -15,5 +15,5 @@ function createTable(a, b){
 }
 
 btnSubmit.addEventListener( 'click', () => {
-    document.getElementById('result').innerHTML = createTable( Number(row.value), Number(column.value));
+    document.getElementById('result').innerHTML = createTable( Number(column.value), Number(row.value));
 });
