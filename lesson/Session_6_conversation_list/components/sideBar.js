@@ -1,13 +1,15 @@
+import { ConversationItem } from "./conversationItem.js";
 import { CreateConversationModal } from "./createConversationModal.js";
 
 class SideBar {
-
+    setActiveConversation;
     $container;
     $buttonCreateConversation;
     $conversationList;
     $createConversationModal;
+    $listConversationItem;
 
-    constructor() {
+    constructor(setActiveConversation) {
         this.$container = document.createElement('div');
         this.$container.style.width = '200px';
 
@@ -19,15 +21,39 @@ class SideBar {
         this.$createConversationModal.setVisible(false);
 
         this.$conversationList = document.createElement('div');
-        this.$conversationList.innerHTML = "Conversation List";
-        db.collection('conversations').onSnapshot(this.conversationListener);
+        this.$conversationList.classList.add("flex", "flex-col", "items-stretch");
+        this.setActiveConversation = setActiveConversation;
 
+        this.$listConversationItem = [];
+
+        db.collection('conversations').onSnapshot(this.conversationListener);
 
     }
 
     conversationListener = (snapshot) => {
         snapshot.docChanges().forEach((change) => {
-            console.log(change.doc.data());
+            const conversation = change.doc.data();
+            const id = change.doc.id;
+            const $conversationItem = new ConversationItem(
+                id,
+                conversation.name,
+                conversation.users.length,
+                this.setActiveConversation
+                );
+
+            this.$listConversationItem.push($conversationItem);
+            this.$conversationList.appendChild($conversationItem.render());
+
+        });
+    };
+
+    setConversation = (conversation) => {
+        this.$listConversationItem.forEach(item => {
+            if (item.id === conversation.id) {
+                item.setActive(true);
+            } else {
+                item.setActive(false);
+            }
         });
     };
 
